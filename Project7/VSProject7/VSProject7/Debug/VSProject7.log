@@ -1,0 +1,6 @@
+﻿  rats.cpp
+c:\users\chees_000\documents\programs\cs31\project7\rats.cpp(1164): warning C4018: '>=': signed/unsigned mismatch
+c:\users\chees_000\documents\programs\cs31\project7\rats.cpp(1185): warning C4018: '>=': signed/unsigned mismatch
+c:\users\chees_000\documents\programs\cs31\project7\rats.cpp(1194): warning C4554: '|': check operator precedence for possible error; use parentheses to clarify precedence
+  VSProject7.vcxproj -> C:\Users\chees_000\Documents\Programs\CS31\Project7\VSProject7\Debug\VSProject7.exe
+  VSProject7.vcxproj -> C:\Users\chees_000\Documents\Programs\CS31\Project7\VSProject7\Debug\VSProject7.pdb (Partial PDB)

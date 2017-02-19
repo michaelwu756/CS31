@@ -1,0 +1,5 @@
+﻿  compile_error.cpp
+c:\users\chees_000\documents\programs\cs31\project1\compile_error.cpp(17): error C2065: 'forDonald': undeclared identifier
+c:\users\chees_000\documents\programs\cs31\project1\compile_error.cpp(20): error C2065: 'forDonald': undeclared identifier
+c:\users\chees_000\documents\programs\cs31\project1\compile_error.cpp(26): error C2146: syntax error: missing ';' before identifier 'cout'
+c:\users\chees_000\documents\programs\cs31\project1\compile_error.cpp(29): error C2065: 'forDonald': undeclared identifier

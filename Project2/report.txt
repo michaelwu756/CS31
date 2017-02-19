@@ -1,0 +1,23 @@
+Obstacles
+An obstacle that I overcame was trying to implement the different tiers of revenues. I had to identify each
+revenue bracket using if statements. I also had to implement the different rate for buildings in UAE and Turkey.
+I solved this by creating a variable fee rate that would change if the country string was UAE or Turkey.
+
+Test Data
+The test data will be it the form
+description("building",revenue,"country")
+
+No building ID ("",10,"USA")
+Revenue is negative ("The Tower",-10,"USA")
+No country ("The Tower",10,"")
+Revenue is a double ("The Tower",0.5,"USA")
+Revenue is below 20 million ("The Tower",10,"USA")
+Revenue is 20 million ("The Tower",20,"USA")
+Revenue is between 20 million and 50 million not in UAE or Turkey ("The Tower",30,"USA")
+Revenue is between 20 million and 50 million in UAE or Turkey ("The Tower",30,"UAE")
+Revenue is 50 million not in UAE or Turkey ("The Tower",50,"USA")
+Revenue is 50 million in UAE or Turkey ("The Tower",50,"UAE")
+Revenue is greater than 50 million not in UAE or Turkey ("The Tower",60,"USA")
+Revenue is greater than 50 million in UAE or Turkey ("The Tower",60,"USA")
+
+My program handles all of these test cases correctly.

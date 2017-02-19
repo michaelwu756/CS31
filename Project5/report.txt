@@ -1,0 +1,298 @@
+OBSTACLES
+A major obstacle I had was coming up with an algorithm to check the satisfaction score. I had to first decide how I would
+parse each word, and had to write my own function to separate the document into an array of cstrings that held a word each.
+Then I could check each rule to see if it had a match within the given distance. Another obstacle was coming up with an
+object oriented approach. I had to write my own data structure, which took longer. In hindsight I could have just used an
+STL list, but it was fun to write my own data structure.
+
+DESIGN
+I use a singly linked list to store the rule list and manipulate it.
+
+I created nodes using a struct named Rule. Each node holds a field for two words, a distance, and a pointer to the next 
+node. In the constructor, a node takes two cstrings and a distance as parameters. It converts the strings to lower case, 
+and stores the strings in alphabetical order. It stores the distance and sets the next node pointer to the null pointer.
+
+I created the singly linked list using a class called RuleList. It holds a field for a pointer to the head node. The default
+constructor sets the head node to the null pointer. Another constructor can be passed two arrays of cstrings, an array of
+distances, and the number of rules in the arrays. The RuleList will automatically discard any rules that have cstrings of
+length 0, cstrings that have non alphabetical characters, or distances that are not positive. For valid rules, the RuleList 
+dynamically creates a new node with the appropriate pair of words and distance and adds it to the end of the linked list. 
+The RuleList has a function called removeDuplicates() that searches the list for any rules that have the same two words, and 
+removes every duplicate except one with the maximum distance.
+
+removeDuplicates() works as follows
+
+set h to be a pointer to the head node
+while h is not a null pointer
+{
+	set  i to be a pointer to the head node
+	while i is not a null pointer
+	{
+		if(i and h do not point to the same rule
+			and both words in the rules pointed to by i and h match
+			and the distance in the rule pointed to by i is equal to or less than the distance in h)
+				then remove the rule pointed to by i and move to the next rule; 
+		else move i to the next rule
+	}
+	move h to the next rule
+}
+
+thus rule at h will never remove rules with distance greater than the distance at the h node. When h comes across
+the max distance node, it will remove all other nodes. This normalizes the rule list. RuleList also has a function
+that converts all its nodes into parallel arrays, called outputArrays. RuleList can return the number of nodes using the 
+length() function by traversing through the list and counting each node. The destructor of a RuleList object traverses
+through each node and deletes them in order. I made the copy constructor and assignment operator private so rule lists
+cannot be copied or assigned to another rule list.
+
+The normalizeRules function simply passes its parameters to a RuleList object, calls removeDuplicates() on that object, 
+calls the outputArrays function to store the normalized list in the original arrays, then returns the length of the rule list.
+
+The calculateSatisfaction function passes its parameters to a RuleList object, then passes the document to a function called
+satisfaction in the RuleList class. The satisfaction function parses the document by removing all characters that are not
+alphabetical or space characters. It then separates the document into an array of cstrings, each cstring containing a non
+empty word with no spaces. Then for every rule, it checks if the rule is satisfied by the document and returns the 
+satisfaction score. The calculateSatisfaction function returns this value also.
+
+the satisfaction function works as follows
+
+get word array from document
+set h to be a pointer to the head node
+set satisfaction score to 0
+while h is not a null pointer
+{
+	for every word in the word array, indexed by i
+	{
+		if the word at i matches the first word in the rule h
+		{
+			start looking at location i-the distance in rule h
+			end at the location i+the distance in rule h
+			for an integer j from start to end locations
+				if the word at j matches the second word in the rule h
+				{
+					add one to satisfaction score
+					break from the inner loop
+				}
+		}
+		if the rule is satisfied, break out of the outer loop
+	}
+	set h to point to the next rule
+}
+return satisfaction score
+
+TEST CASES
+
+normalizeRules
+
+	works with nRules<0
+		const int nRules = 4;
+		char word1[nRules][MAX_WORD_LENGTH+1] = {
+			"mad",       "deranged", "nefarious", "have"
+		};
+		char word2[nRules][MAX_WORD_LENGTH+1] = {
+			"scientist", "robot",    "plot",      "mad"
+		};
+		int distance[nRules] = {
+			2,           4,          1,           500
+		};
+		int n=normalizeRules(word1,word2,distance,-1);
+		assert(n==0);
+
+	works with nRules=0
+		const int nRules = 4;
+		char word1[nRules][MAX_WORD_LENGTH+1] = {
+			"mad",       "deranged", "nefarious", "have"
+		};
+		char word2[nRules][MAX_WORD_LENGTH+1] = {
+			"scientist", "robot",    "plot",      "mad"
+		};
+		int distance[nRules] = {
+			2,           4,          1,           500
+		};
+		int n=normalizeRules(word1,word2,distance,0);
+		assert(n==0);
+		
+	remove rules with empty words
+		const int nRules = 4;
+		char word1[nRules][MAX_WORD_LENGTH+1] = {
+			"mad",       "deranged", "nefarious", "have"
+		};
+		char word2[nRules][MAX_WORD_LENGTH+1] = {
+			"scientist", "",    "plot",      "mad"
+		};
+		int distance[nRules] = {
+			2,           4,          1,           500
+		};
+		int n=normalizeRules(word1,word2,distance,nRules);
+		assert(n==3);
+		
+	remove rules with non alpha characters
+		const int nRules = 4;
+		char word1[nRules][MAX_WORD_LENGTH+1] = {
+			"mad",       "deranged", "nefarious", "have"
+		};
+		char word2[nRules][MAX_WORD_LENGTH+1] = {
+			"scientist", "robot!",    "plot",      "mad"
+		};
+		int distance[nRules] = {
+			2,           4,          1,           500
+		};
+		int n=normalizeRules(word1,word2,distance,nRules);
+		assert(n==3);
+		
+	remove rules with distance not positive
+		const int nRules = 4;
+		char word1[nRules][MAX_WORD_LENGTH+1] = {
+			"mad",       "deranged", "nefarious", "have"
+		};
+		char word2[nRules][MAX_WORD_LENGTH+1] = {
+			"scientist", "robot",    "plot",      "mad"
+		};
+		int distance[nRules] = {
+			2,           0,          -1,           500
+		};
+		int n=normalizeRules(word1,word2,distance,nRules);
+		assert(n==2);
+		
+	remove rules with same words in either order, keeping one with max distance
+		const int nRules = 4;
+		char word1[nRules][MAX_WORD_LENGTH+1] = {
+			"mad",       "scientist", "mad", "scientist"
+		};
+		char word2[nRules][MAX_WORD_LENGTH+1] = {
+			"scientist", "mad",    "scientist",      "mad"
+		};
+		int distance[nRules] = {
+			2,           4,          500,           500
+		};
+		int n=normalizeRules(word1,word2,distance,nRules);
+		assert(n==1);
+		assert(distance[0]==500);
+		
+	converts rules to lower case
+		const int nRules = 4;
+		char word1[nRules][MAX_WORD_LENGTH+1] = {
+			"MAd",       "sciEntist", "maD", "SCIENTIST"
+		};
+		char word2[nRules][MAX_WORD_LENGTH+1] = {
+			"scientist", "mad",    "scientist",      "MAD"
+		};
+		int distance[nRules] = {
+			2,           4,          500,           500
+		};
+		int n=normalizeRules(word1,word2,distance,nRules);
+		assert(n==1);
+		assert(distance[0]==500);
+		
+	works if all rules are invalid
+		const int nRules = 4;
+		char word1[nRules][MAX_WORD_LENGTH+1] = {
+			"MAd",       "sci Entist", "maD", "SCIENT-IST"
+		};
+		char word2[nRules][MAX_WORD_LENGTH+1] = {
+			"scient3ist", "mad",    "",      "MAD"
+		};
+		int distance[nRules] = {
+			2,           4,          500,           500
+		};
+		int n=normalizeRules(word1,word2,distance,nRules);
+		assert(n==0);
+
+calculateSatisfaction
+
+	works with two same words in a rule, doesn't count the word by itself as a match
+		const int nRules = 1;
+		char word1[nRules][MAX_WORD_LENGTH+1] = {
+			"mad"
+		};
+		char word2[nRules][MAX_WORD_LENGTH+1] = {
+			"mad"
+		};
+		int distance[nRules] = {
+			1
+		};
+		assert(calculateSatisfaction(word1,word2,distance,nRules,"mad mad")==1);
+		assert(calculateSatisfaction(word1,word2,distance,nRules,"mad a")==0);
+		
+	checks words with proper distance before and after
+		const int nRules = 1;
+		char word1[nRules][MAX_WORD_LENGTH+1] = {
+			"mad"
+		};
+		char word2[nRules][MAX_WORD_LENGTH+1] = {
+			"scientist"
+		};
+		int distance[nRules] = {
+			1
+		};
+		assert(calculateSatisfaction(word1,word2,distance,nRules,"mad scientist")==1);
+		assert(calculateSatisfaction(word1,word2,distance,nRules,"scientist mad")==1);
+		assert(calculateSatisfaction(word1,word2,distance,nRules,"mad a scientist")==0);
+		assert(calculateSatisfaction(word1,word2,distance,nRules,"scientist a mad")==0);
+		
+	works with multiple rules
+		const int nRules = 4;
+		char word1[nRules][MAX_WORD_LENGTH+1] = {
+			"mad",       "deranged", "nefarious", "have"
+		};
+		char word2[nRules][MAX_WORD_LENGTH+1] = {
+			"scientist", "robot",    "plot",      "mad"
+		};
+		int distance[nRules] = {
+			2,           4,          1,           13
+		};
+		assert(calculateSatisfaction(word1,word2,distance,nRules,"mad have scientist")==2);
+		
+	does not duplicate count a rule
+		const int nRules = 4;
+		char word1[nRules][MAX_WORD_LENGTH+1] = {
+			"mad",       "deranged", "nefarious", "have"
+		};
+		char word2[nRules][MAX_WORD_LENGTH+1] = {
+			"scientist", "robot",    "plot",      "mad"
+		};
+		int distance[nRules] = {
+			2,           4,          1,           13
+		};
+		assert(calculateSatisfaction(word1,word2,distance,nRules,"mad mad scientist mad")==1);
+		
+	converts everything to lowercase and ignores multiple whitespace
+		const int nRules = 4;
+		char word1[nRules][MAX_WORD_LENGTH+1] = {
+			"mad",       "deranged", "nefarious", "have"
+		};
+		char word2[nRules][MAX_WORD_LENGTH+1] = {
+			"scientist", "robot",    "plot",      "mad"
+		};
+		int distance[nRules] = {
+			2,           4,          1,           13
+		};
+		assert(calculateSatisfaction(word1,word2,distance,nRules,"mad MAD      scieNtist        mad")==1);
+		
+	ignores non alpha characters
+		const int nRules = 4;
+		char word1[nRules][MAX_WORD_LENGTH+1] = {
+			"mad",       "deranged", "nefarious", "have"
+		};
+		char word2[nRules][MAX_WORD_LENGTH+1] = {
+			"scientist", "robot",    "plot",      "mad"
+		};
+		int distance[nRules] = {
+			2,           4,          1,           13
+		};
+		assert(calculateSatisfaction(word1,word2,distance,nRules,"mad MA32423423D      scieNtist   h^^&^ave     ma44d")==2);
+		
+	works with nRules<=0
+		const int nRules = 4;
+		char word1[nRules][MAX_WORD_LENGTH+1] = {
+			"mad",       "deranged", "nefarious", "have"
+		};
+		char word2[nRules][MAX_WORD_LENGTH+1] = {
+			"scientist", "robot",    "plot",      "mad"
+		};
+		int distance[nRules] = {
+			2,           4,          1,           13
+		};
+		assert(calculateSatisfaction(word1,word2,distance,-1,"mad scientist")==0);
+		assert(calculateSatisfaction(word1,word2,distance,0,"mad scientist")==0);
+
+My program works with all these test cases.

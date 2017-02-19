@@ -1,0 +1,58 @@
+Obstacles
+A notable obstacle I overcame was trying to make sure elements equal to the separator in the separate function end up
+in the middle of the array. I solved this problem by going through the array twice, once to place all the elements < the 
+separator at the beginning and another time to place all the elements > the separator at the end of the array.
+
+Test Cases
+string a[3]={"a","b","c"};
+assert(appendToAll(a,2," ")==2 && a[1]=="b " && a[2]=="c");
+//returns number appended when sucess and correctly appends
+assert(appendToAll(a,-1,"aoeuaoeu")==-1);
+//array size negative, returns -1
+
+string b[3]={"a","b","c"};
+assert(lookup(b,3,"c")==2 && lookup(b,2,"c")==-1 && lookup(b,-1,"c")==-1);
+//finds correct position  //returns -1 when not found  //return -1 when array size negative
+
+assert(positionOfMax(b,3)==2 && positionOfMax(b,0)==-1 && positionOfMax(b,-1)==-1);
+//finds correct position of max //returns -1 when no max element //returns -1 when array size negative
+
+assert(rotateLeft(b,0,0)==-1 && rotateLeft(b,3,-1)==-1 && rotateLeft(b,-1,1)==-1 && rotateLeft(b,3,0)==0);
+//returns -1 when empty because nothing at b[0] //returns -1 when invalid input //rotates correctly and returns position
+assert(b[0]=="b" && b[1]=="c" && b[2]=="a");
+//check that array is rotated
+
+string c[10]={"a","a","a","a","c","a","b","b","b","c"};
+assert(countRuns(b,0)==0 && countRuns(b,-1)==-1 && countRuns(b,3)==3 && countRuns (c,10)==5);
+//no runs in empty array //return -1 for invalid input //correctly counts runs
+
+assert(flip(c,0)==0 && flip(c,-1)==-1 && flip(c,10)==10);
+//flip 0 elements does nothing //returns -1 for invalid input //returns correct value
+assert(c[0]=="c" && c[1]=="b" && c[2]=="b" && c[3]=="b" && c[4]=="a" && c[5]=="c" && c[6]=="a" && c[7]=="a" && c[8]=="a" && c[9]=="a");
+//checks everything is flipped
+
+string d[5]={"a","b","c","d","e"};
+string e[3]={"a","b","d"};
+assert(differ(d,-1,e,3)==-1 && differ(d,5,e,-1)==-1 && differ(d,5,e,3)==2 && differ(d,5,e,1)==1);
+//returns -1 for invalid input //returns index of difference //returns least of n1 and n2 if no difference
+
+string f[5]={"a","b","c","b","c"};
+string g[2]={"b","c"};
+assert(subsequence(f,-1,g,0)==-1 && subsequence(f,0,g,-1)==-1 && subsequence(f,3,g,0)==0);
+//returns -1 for invalid input //empty array is valid subsequence
+assert(subsequence(f,2,g,2)==-1 && subsequence(f,5,g,2)==1);
+//returns -1 when subsequence not found //returns index of lowest subsequence when found
+
+assert(lookupAny(f,-1,g,0)==-1 && lookupAny(f,0,g,-1)==-1);
+//returns -1 for invalid input
+assert(lookupAny(f,1,g,2)==-1 && lookupAny(f,5,g,2)==1);
+//returns -1 if not found //returns index of lowest find
+
+assert(separate(f,-1,"b")==-1 && separate (f,0,"b")==0);
+//returns -1 for invalid input //works with empty array
+assert(separate(f,5,"b")==1);
+//separates and returns correctly
+assert(f[0]=="a" && f[1]=="b"  && f[2]=="b" && f[3]=="c" && f[4]=="c");
+//checks array is separated
+
+My program handles all these test cases correctly

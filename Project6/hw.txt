@@ -1,0 +1,206 @@
+1.
+a)
+	The bugs are: a syntax error, the array is traversed backwards, and it goes out of bound because the increment happens before printing
+	
+	int main()
+	{
+		int arr[3] = { 5, 10, 15 };
+		int* ptr = arr;
+
+		*ptr = 30;          // set arr[0] to 30
+		*(ptr + 1) = 20;      // set arr[1] to 20 //syntax error here
+		ptr += 2;
+		ptr[0] = 10;        // set arr[2] to 10
+		
+		int* ptr2=arr;//must traverse in positive direction
+		while (ptr2 <= ptr)
+		{
+			cout << *ptr2 << endl;    // print values
+			ptr2++;//increment after printing to avoid going out of bounds
+		}
+	}
+b)
+	The function won't change the pointer because the pointer is passed by value. The parameter type should be a reference to a pointer.
+	
+	void findMax(int arr[], int n, int*& pToMax)
+	{
+		if (n <= 0) 
+			return;      // no items, no maximum!
+
+		pToMax = arr;
+
+		for (int i = 1; i < n; i++)
+		{
+			if (arr[i] > *pToMax)
+				 pToMax = arr + i;
+		}
+	}       
+
+	int main()
+	{
+		int nums[4] = { 5, 3, 15, 6 };
+		int* ptr;
+
+		findMax(nums, 4, ptr);
+		cout << "The maximum is at address " << ptr << endl;
+		cout << "It's at position " << ptr - nums << endl;
+		cout << "Its value is " << *ptr << endl;
+	}
+c)
+	It may not work because ptr is uninitialized.
+	
+	void computeCube(int n, int* ncubed)
+	{
+		*ncubed = n * n * n;
+	}
+
+	int main()
+	{
+		int x;
+		int* ptr=&x;
+		computeCube(5, ptr);
+		cout << "Five cubed is " << *ptr << endl;
+	}
+d)
+	The function compares the pointer addresses when it should compare the value of the elements at the pointer address.
+	
+	bool strequal(const char str1[], const char str2[])
+	{
+		while (*str1 != 0  &&  *str2 != 0)
+		{
+			if (*str1 != *str2)  // compare corresponding characters
+				return false;
+			str1++;            // advance to the next character
+			str2++;
+		}
+		return *str1 == *str2;   // both ended at same time?
+	}
+
+	int main()
+	{
+		char a[15] = "Zhao";
+		char b[15] = "Zhou";
+
+		if (strequal(a,b))
+			cout << "They're the same person!\n";
+	}
+e)
+	The getPtrToArray function is returning a pointer to a local array, which is deleted once it goes out of scope. Thus the values at the location where the array was could be anything.
+
+2.
+a) double* cat;
+b) double mouse[5];
+c) cat = (mouse+4);
+d) *cat=25;
+e) *(mouse+3)=42;
+f) cat-=3;
+g) cat[1]=54;
+h) cat[0]=17;
+i) bool b = (*cat==*(cat+1));
+j) bool d = (cat==mouse);
+
+3.
+a)
+	double mean(const double* scores, int numScores)
+    {
+        const double* ptr = scores;
+        double tot = 0;
+		int i = 0;
+        while (ptr+i!= scores + numScores)
+        {
+            tot += *(ptr+i);
+            i++;
+        }
+        return tot/numScores;
+    }
+b)
+	const char* findTheChar(const char* str, char chr)
+    {
+        for (int k = 0; *(str+k) != 0; k++)
+            if (*(str+k) == chr)
+                return str+k;
+
+        return nullptr;
+    }
+c)
+	const char* findTheChar(const char* str, char chr)
+    {
+        for (; *str != 0; str++)
+            if (*str == chr)
+                return str;
+
+        return nullptr;
+    }
+4.
+
+	The program prints:
+	3 //this line is due to the distance between the pointer and the last element of the array being 3 units, since the pointer finishes pointing at array[2], while the last element is array[5]. So the distance is 3.
+	4 //this line is due to swap2 switching the 4 and the -1 in the array
+	79//this is due to *(array+1) = 79 setting the second element of the array to 79
+	-1//this is due to the pointer being initialized to the first element of the array, 5, changing that to -1, then switching the positions of 4 and -1.
+	9//this is because the pointer is incremented by 2 after initialization, then the square bracket notation is used to set the next element, 17, to 9. This is the fourth element.
+	22//value not modified
+	19//value not modified
+	//see comments below for clarification
+	
+	int* maxwell(int* a, int* b)
+	{
+		if (*a > *b)
+			return a;
+		else
+			return b;
+	}
+
+	void swap1(int* a, int* b)
+	{
+		int* temp = a;
+		a = b;
+		b = temp;
+	}
+
+	void swap2(int* a, int* b)
+	{
+		int temp = *a;
+		*a = *b;
+		*b = temp;
+	}
+
+	int main()
+	{
+		int array[6] = { 5, 3, 4, 17, 22, 19 };
+
+		int* ptr = maxwell(array, &array[2]);//returns pointer to larger value, so pointer to first element, 5
+		*ptr = -1; // changes 5 to -1
+		ptr += 2;//pointer to third element, 4
+		ptr[1] = 9;//sets 17 to 9
+		*(array+1) = 79;//sets 3 to 79
+		//array is { -1, 79, 4, 9, 22, 19 }
+		cout << &array[5] - ptr << endl;//prints distance between the last element and the pointer, which is 5-2=3
+
+		swap1(&array[0], &array[1]);
+		//does nothing, pointers passed by value then swapped locally
+		swap2(array, &array[2]);
+		//array is{ 4, 79, -1, 9, 22, 19 }
+
+		for (int i = 0; i < 6; i++)
+			cout << array[i] << endl;//prints out elements of array in order
+	} 
+	
+5.
+	void removeS(char str[])
+	{
+		while(*str!='\0')
+		{
+			if(*str=='s'||*str=='S')
+			{
+				char* ptr=str;
+				while(*ptr!='\0')
+				{
+					*ptr=*(ptr+1);
+					ptr++;
+				}
+			}
+			else
+				str++;
+		}
+	}

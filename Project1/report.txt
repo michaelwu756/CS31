@@ -1,0 +1,21 @@
+In step 5, I entered the following sequence of integers: 100, 100, 100.
+The following output occured:
+
+How many registered voters were surveyed? 100
+How many of them say they will vote for Hillary? 100
+How many of them say they will vote for Donald? 100
+
+100.0% say they will vote for Hillary.
+100.0% say they will vote for Donald.
+Donald is predicted to win the election.
+
+This output is nonsensical because everybody says they will vote for Hillary and Trump at the same time,
+which cannot happen. Also, Trump is still predicted to win even though both percentages are the same.
+
+In step 6, the logic error I introduced was switching the order the variables forHillary and forDonald
+were read in, on lines 16 and 18. This causes the percentages to be recorded wrong and switched. For
+reasonable input, the program will predict the wrong candidate to win.
+
+In step 7, the two compile errors I introduced were deleting the declaration of the forDonald variable,
+and leaving a semicolon off of line 25. This lead to an error saying that "'forDonald' was not declared
+in this scope", and an error saying "expected ';' before 'cout'", respectively.

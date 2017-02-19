@@ -1,0 +1,77 @@
+Obstacles
+The most notable obstacle I overcame was trying to come up with a way to parse the data in the hasCorrectSyntax function. I
+overcame this by having two modes of reading in data, one to read in the state code and another to read in the state forecast.
+Other than that, the rest of the project was fairly straightforward.
+
+Design
+The hasCorrectSyntax function works as follows
+
+while polldata still has remaining characters
+{
+	clear recorded state code, number, party, and mode
+	while polldata still has remaining characters or mode is less than 2
+	{
+		if mode is 0
+		{
+			add character to state code
+			if state code has 2 characters
+				increase mode
+		}
+		else if mode is 1
+		{
+			if character is a digit
+				add character to number string
+			else
+			{
+				add character to party
+				increase mode
+			}
+		}
+	}
+	if state code, number string, or party is invalid
+		return false
+}
+return true
+
+The count votes function works as follows
+
+Convert party and poll string to upper case
+If poll string is not valid
+	return 1
+If poll string has 0 as electoral votes
+	return 2
+If party is not a letter
+	return 3
+loop through each character of poll data string
+{
+	if character is a digit
+		record it
+	else
+	{
+		if the recorded digits are not empty and the character matches the party
+			add value of recorded digits to vote count
+		clear recorded digits
+	}
+}
+
+The predictsZeroVotes function simply checks if there is a string of zeros in the polldata string and returns true if it exists.
+The isValidNumber function checks if a string is a number that has 1 or 2 digits.
+The strToUpper function converts a string to uppercase character by character.
+
+Test Cases
+(hasCorrectSyntax("")==true)//empty string
+(hasCorrectSyntax("AL1DAK1DAZ1DAR1DCA1DCO1DCT1DDE1DDC1DFL1DGA1DHI1DID1DIL1DIN1DIA1DKS1DKY1DLA1DME1DMD1DMA1DMI1DMN1DMS1DMO1DMT1DNE1DNV1DNH1DNJ1DNM1DNY1DNC1DND1DOH1DOK1DOR1DPA1DRI1DSC1DSD1DTN1DTX1DUT1DVT1DVA1DWA1DWV1DWI1DWY1D")==true)//every state code test	
+(hasCorrectSyntax(" ")==false)//non alphanumeric character
+(hasCorrectSyntax("NJ39")==false)//missing party
+(hasCorrectSyntax("39D")==false)//missing state
+(hasCorrectSyntax("XY33B")==false)//invalid state code
+(hasCorrectSyntax("NJD")==false)//missing electoral vote number
+(hasCorrectSyntax("NJ999D")==false)//number must have 1 or 2 digits
+(hasCorrectSyntax("NJ1D")==true)//1 digit
+(hasCorrectSyntax("NJ11D")==true)//2 digits
+(hasCorrectSyntax("nj1d")==true)//lowercase
+
+(countVotes("TX38RCA 5D", 'd', votes)==1)//incorrect syntax
+(countVotes("TX38RCA00D", 'd', votes)==2)//state with zero votes
+(countVotes("TX38RCA01D", ' ', votes)==3)//invalid party
+(countVotes("TX38RCA01D", 'd', votes)==0 && votes==1)//checks votes correctly
